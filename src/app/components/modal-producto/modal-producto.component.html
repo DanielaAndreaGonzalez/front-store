@@ -1,0 +1,31 @@
+<!-- modal-producto.component.html -->
+ @if (show) {
+   <div class="modal" tabindex="-1" style="display:block; background-color: rgba(0,0,0,0.5);">
+     <div class="modal-dialog">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title">{{ modalTitle }}</h5>
+           <button type="button" class="btn-close" (click)="close()"></button>
+         </div>
+         <div class="modal-body">
+           <form (ngSubmit)="onSubmit()">
+             <input type="hidden" [(ngModel)]="producto.id" name="id">
+             <div class="mb-3">
+               <label for="nombre" class="form-label">Nombre</label>
+               <input type="text" class="form-control" id="nombre" [(ngModel)]="producto.nombre" name="nombre" required>
+             </div>
+             <div class="mb-3">
+               <label for="precio" class="form-label">Precio</label>
+               <input type="number" class="form-control" id="precio" [(ngModel)]="producto.precio" name="precio" required>
+             </div>
+             <div class="mb-3">
+               <label for="stock" class="form-label">Stock</label>
+               <input type="number" class="form-control" id="stock" [(ngModel)]="producto.stock" name="stock" required>
+             </div>
+             <button type="submit" class="btn btn-primary">Guardar</button>
+           </form>
+         </div>
+       </div>
+     </div>
+   </div>
+ }

@@ -1,7 +1,8 @@
 <!-- productos.component.html -->
 <div class="container mt-4">
   <h2>Gestión de Productos</h2>
-  <button class="btn btn-primary my-2" (click)="openModal(null)">Añadir Producto</button>
+
+  <button class="btn btn-primary my-2" (click)="openModal()">Añadir Producto</button>
 
   <table class="table">
       <thead class="table-dark">
@@ -22,11 +23,15 @@
               <td>{{ producto.stock }}</td>
               <td>
                   <button class="btn btn-info" (click)="openModal(producto)">Editar</button>
-                  <button class="btn btn-danger" (click)="deleteProducto(producto.id)">Eliminar</button>
+                  <button class="btn btn-danger ms-2" (click)="deleteProducto(producto.id)">Eliminar</button>
               </td>
             </tr>
           }
 
       </tbody>
   </table>
+
+  <app-modal-producto [show]="isModalOpen" [(producto)]="selectedProducto"
+                      (closeEvent)="closeModal()"
+                      (saveEvent)="handleSave($event)"></app-modal-producto>
 </div>

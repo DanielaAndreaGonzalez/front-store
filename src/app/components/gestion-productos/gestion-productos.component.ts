@@ -2,18 +2,20 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Producto } from '../model/Producto';
 import { ProductosService } from '../../services/productos.service';
+import { ModalProductoComponent } from '../modal-producto/modal-producto.component';
 
 @Component({
   selector: 'app-gestion-productos',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ModalProductoComponent],
   templateUrl: './gestion-productos.component.html',
   styleUrl: './gestion-productos.component.css'
 })
 export class GestionProductosComponent {
-  productos:Producto[] = []; // Este debería ser alimentado por un servicio
-  producto = { id: null, nombre: '', precio: null, stock: null };
-  modalTitle = "Añadir Producto";
+  productos: Producto[] = [];
+  selectedProducto!: Producto;  // Usaremos esto para el modal
+  isModalOpen: boolean = false;  // Controla la visibilidad del modal
+  modalTitle: string = "Añadir Producto";
 
   constructor(private productoService: ProductosService) { }
 
@@ -21,31 +23,32 @@ export class GestionProductosComponent {
     this.loadProductos();
   }
 
-  loadProductos() {
+  loadProductos(): void {
     this.productos = this.productoService.getProductos();
   }
 
-  openModal(producto: any) {
-    if (producto) {
-      this.producto = { ...producto };
-      this.modalTitle = "Editar Producto";
-    } else {
-      this.producto = { id: null, nombre: '', precio: null, stock: null };
-      this.modalTitle = "Añadir Producto";
-    }
-    // Abrir el modal aquí, usualmente utilizando jQuery o directamente con Bootstrap JS
+  openModal(producto?: Producto): void {
+    this.selectedProducto = producto ? { ...producto } : { id: 0, nombre: '', precio: 0, stock: 0 };
+    this.modalTitle = producto ? "Editar Producto" : "Añadir Producto";
+    this.isModalOpen = true;  // Abre el modal
   }
 
-  deleteProducto(id: number) {
-    // Lógica para eliminar un producto
+  closeModal(): void {
+    this.isModalOpen = false;  // Cierra el modal
   }
 
-  onSubmit() {
-    if (this.producto.id) {
-      // Actualizar producto
+  handleSave(producto: Producto): void {
+    if (producto.id) {
+      this.productoService.updateProducto(producto);  // Actualiza el producto
     } else {
-      // Añadir nuevo producto
+      this.productoService.addProducto(producto);  // Añade el producto
     }
-    // Cerrar el modal aquí
+    this.closeModal();  // Cierra el modal
+    this.loadProductos();  // Recarga la lista de productos
+  }
+
+  deleteProducto(id: number): void {
+    //this.productoService.deleteProducto(id);  // Elimina el producto
+    this.loadProductos();  // Recarga los productos
   }
 }
