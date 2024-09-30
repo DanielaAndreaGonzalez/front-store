@@ -1,1 +1,45 @@
-<p>registro-ventas works!</p>
+<!-- registro-ventas.component.html -->
+<div class="container mt-4">
+  <h2>Registro de Ventas</h2>
+  <form (ngSubmit)="registrarVenta()">
+      <div class="mb-3">
+          <label for="producto" class="form-label">Producto</label>
+          <select class="form-select" id="producto" [(ngModel)]="venta.productoId" name="producto">
+              @for (producto of productos; track $index) {
+                <option [value]="producto.id">{{ producto.nombre }}</option>
+              }
+          </select>
+      </div>
+      <div class="mb-3">
+          <label for="cantidad" class="form-label">Cantidad</label>
+          <input type="number" class="form-control" id="cantidad" [(ngModel)]="venta.cantidad" name="cantidad" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Registrar Venta</button>
+  </form>
+
+  <table class="table mt-4">
+      <thead>
+          <tr>
+              <th>Fecha</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Total</th>
+              <th>Acciones</th>
+          </tr>
+      </thead>
+      <tbody>
+          @for (v of ventas; track $index) {
+            <tr>
+                <td>{{ v.fecha | date:'medium' }}</td>
+                <td>{{ v.productoNombre }}</td>
+                <td>{{ v.cantidad }}</td>
+                <td>{{ v.total | currency }}</td>
+                <td>
+                    <button class="btn btn-info" (click)="editarVenta(v)">Editar</button>
+                    <button class="btn btn-danger" (click)="eliminarVenta(v.id)">Eliminar</button>
+                </td>
+            </tr>
+          }
+      </tbody>
+  </table>
+</div>

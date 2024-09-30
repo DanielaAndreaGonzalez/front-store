@@ -13,8 +13,8 @@ import { ModalProductoComponent } from '../modal-producto/modal-producto.compone
 })
 export class GestionProductosComponent {
   productos: Producto[] = [];
-  selectedProducto!: Producto;  // Usaremos esto para el modal
-  isModalOpen: boolean = false;  // Controla la visibilidad del modal
+  selectedProducto!: Producto;
+  isModalOpen: boolean = false;
   modalTitle: string = "Añadir Producto";
 
   constructor(private productoService: ProductosService) { }
@@ -24,11 +24,14 @@ export class GestionProductosComponent {
   }
 
   loadProductos(): void {
-    this.productos = this.productoService.getProductos();
+    this.productoService.getProductos().subscribe({
+      next: (data) => this.productos = data,
+      error: (e) => console.error(e)
+    });
   }
 
   openModal(producto?: Producto): void {
-    this.selectedProducto = producto ? { ...producto } : { id: 0, nombre: '', precio: 0, stock: 0 };
+    this.selectedProducto = producto ? { ...producto } : { id: 0, name: '', price: 0, stock: 0 };
     this.modalTitle = producto ? "Editar Producto" : "Añadir Producto";
     this.isModalOpen = true;  // Abre el modal
   }
@@ -39,16 +42,25 @@ export class GestionProductosComponent {
 
   handleSave(producto: Producto): void {
     if (producto.id) {
-      this.productoService.updateProducto(producto);  // Actualiza el producto
+      this.productoService.updateProducto(producto).subscribe({
+        next: (data) => {
+          this.loadProductos();
+        },
+        error: (e) => console.error(e)
+      });
     } else {
-      this.productoService.addProducto(producto);  // Añade el producto
+      this.productoService.addProducto(producto).subscribe({
+        next: (data) => {
+          this.loadProductos();
+        },
+        error: (e) => console.error(e)
+      });
     }
-    this.closeModal();  // Cierra el modal
-    this.loadProductos();  // Recarga la lista de productos
+    this.closeModal();
   }
 
   deleteProducto(id: number): void {
-    //this.productoService.deleteProducto(id);  // Elimina el producto
-    this.loadProductos();  // Recarga los productos
+    this.productoService.deleteProducto(id).subscribe();
+    this.productos = this.productos.filter(producto => producto.id !== id);
   }
 }

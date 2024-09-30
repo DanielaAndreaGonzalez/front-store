@@ -18,8 +18,8 @@
           @for (producto of productos; track $index) {
             <tr >
               <td>{{ producto.id }}</td>
-              <td>{{ producto.nombre }}</td>
-              <td>{{ producto.precio}}</td>
+              <td>{{ producto.name }}</td>
+              <td>{{ producto.price}}</td>
               <td>{{ producto.stock }}</td>
               <td>
                   <button class="btn btn-info" (click)="openModal(producto)">Editar</button>

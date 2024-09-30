@@ -19,7 +19,7 @@ export class ModalProductoComponent {
   modalTitle: string = "Añadir Producto";
 
   constructor() {
-    this.producto = { id: 0, nombre: '', precio: 0, stock: 0};
+    this.producto = { id: 0, name: '', price: 0, stock: 0};
    }
 
   close() {
