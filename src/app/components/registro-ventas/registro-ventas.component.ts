@@ -5,6 +5,7 @@ import { Venta } from '../model/Venta';
 import { VentasService } from '../../services/ventas.service';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { ItemVenta } from '../model/ItemVenta';
 
 @Component({
   selector: 'app-registro-ventas',
@@ -16,7 +17,9 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 export class RegistroVentasComponent {
   productos: Producto[] = [];
   ventas: Venta[] = [];
-  venta: Venta = { id: 0,productoId:0,  productoNombre: '', cantidad: 0, fecha: new Date(), total: 0 };
+  venta: Venta = { id: 0, quantity: 0, saleDate: new Date(), total: 0, saleItems: [] };
+  selectedProduct: number = 0;
+  cantidadProducto: number = 0;
 
   constructor(private productosService: ProductosService, private ventasService: VentasService) { }
 
@@ -33,23 +36,53 @@ export class RegistroVentasComponent {
   }
 
   cargarVentas() {
-    this.ventas = this.ventasService.getVentas();
+    this.ventasService.getVentas().subscribe({
+      next: (data) => {
+        this.ventas = data;
+      },
+      error: (e) => console.error(e)
+    });
   }
 
-  registrarVenta() {
-    if (this.venta.cantidad && this.venta.productoId) {
-      this.ventasService.addVenta(this.venta);
-      this.cargarVentas(); // Recarga la lista de ventas
-      this.venta = { id: 0, productoId: 0,productoNombre: '', cantidad: 0, fecha: new Date(), total: 0 }; // Resetea el formulario
+  agregarProducto() {
+    const producto = this.productos.find(p => p.id == this.selectedProduct);
+    if (producto && this.cantidadProducto > 0) {
+      const itemVenta: ItemVenta = {
+        id: 0, // Esto puede cambiar según cómo manejes los IDs
+        product: producto,
+        saleId: this.venta.id,
+        quantity: this.cantidadProducto
+      };
+      this.venta.quantity += this.cantidadProducto;
+      this.venta.saleItems.push(itemVenta);
+      this.actualizarTotal();
+      this.cantidadProducto = 0;
+      this.selectedProduct = 0;
     }
   }
 
-  editarVenta(venta: Venta) {
-    this.venta = { ...venta }; // Carga la venta en el formulario para editar
+  actualizarTotal() {
+    this.venta.total = this.venta.saleItems.reduce((total, item) => {
+      const producto = this.productos.find(p => p.id === item.product.id);
+      return total + (producto ? producto.price * item.quantity : 0);
+    }, 0);
   }
 
-  eliminarVenta(id: number) {
-    this.ventasService.deleteVenta(id);
-    this.cargarVentas(); // Recarga la lista de ventas
+  registrarVenta() {
+    if (this.venta.saleItems.length > 0) {
+      this.ventasService.addVenta(this.venta).subscribe({
+        next: () => {
+          console.log('Venta registrada');
+          this.cargarVentas();
+          this.venta = { id: 0, quantity: 0, saleDate: new Date(), total: 0, saleItems: [] };
+        },
+        error: (e) => console.error(e)
+      });
+    }
+  }
+
+  eliminarProducto(index: number) {
+    this.venta.saleItems.splice(index, 1);
+    this.actualizarTotal();
   }
 }

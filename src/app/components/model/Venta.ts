@@ -1,8 +1,9 @@
+import { ItemVenta } from "./ItemVenta";
+
 export interface Venta {
   id: number;
-  productoId: number;
-  productoNombre?: string;
-  cantidad: number;
-  fecha: Date;
+  quantity: number;
+  saleDate: Date;
   total: number;
+  saleItems: ItemVenta[];
 }
