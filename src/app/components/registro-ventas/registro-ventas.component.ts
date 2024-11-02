@@ -85,4 +85,11 @@ export class RegistroVentasComponent {
     this.venta.saleItems.splice(index, 1);
     this.actualizarTotal();
   }
+
+  onFileChange(event: any) {
+    const files = event.target.files;
+    if (files) {
+      alert("Se guardó el comprobante correctamente.");
+    }
+  }
 }

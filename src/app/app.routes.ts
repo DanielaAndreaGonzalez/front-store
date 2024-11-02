@@ -5,14 +5,14 @@ import { GestionProductosComponent } from './components/gestion-productos/gestio
 import { RegistroVentasComponent } from './components/registro-ventas/registro-ventas.component';
 import { InformesComponent } from './components/informes/informes.component';
 import { ConfiguracionComponent } from './components/configuracion/configuracion.component';
-import { authGuard } from './auth.guard';
+import { RolesGuard } from './guards/roles.service';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
-  { path: 'productos', component: GestionProductosComponent, canActivate: [authGuard] },
-  { path: 'ventas', component: RegistroVentasComponent, canActivate: [authGuard] },
-  { path: 'informes', component: InformesComponent, canActivate: [authGuard] },
-  { path: 'configuracion', component: ConfiguracionComponent, canActivate: [authGuard] }
+  { path: 'dashboard', component: DashboardComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
+  { path: 'productos', component: GestionProductosComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
+  { path: 'ventas', component: RegistroVentasComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
+  { path: 'informes', component: InformesComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } },
+  { path: 'configuracion', component: ConfiguracionComponent, canActivate: [RolesGuard], data: { expectedRole: ["ADMIN"] } }
 ];
